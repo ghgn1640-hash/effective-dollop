@@ -1,0 +1,174 @@
+# effective-dollop <!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NINJA-CORE 2.0 ULTRA BYPASS</title>
+    <style>
+        :root { --main-red: #ff0000; --hacker-green: #00ff00; --bg-black: #050505; }
+        body { background: var(--bg-black); color: white; font-family: 'Courier New', monospace; margin: 0; overflow-x: hidden; }
+        
+        /* HIỆU ỨNG RAIN CODE (MA TRẬN) NHẸ */
+        canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.2; }
+
+        /* HEADER NINJA */
+        .header { padding: 40px; text-align: center; border-bottom: 2px solid var(--main-red); background: rgba(0,0,0,0.8); }
+        .ninja-logo { font-size: 80px; font-weight: 900; color: var(--main-red); text-shadow: 0 0 30px var(--main-red); letter-spacing: 5px; }
+        
+        /* KHUNG CHỌN CHẾ ĐỘ */
+        .container { max-width: 900px; margin: 20px auto; padding: 20px; }
+        .mode-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .btn-mode { 
+            background: #111; border: 2px solid #333; padding: 30px; border-radius: 15px; 
+            cursor: pointer; transition: 0.3s; text-align: center;
+        }
+        .btn-mode:hover { border-color: var(--main-red); transform: translateY(-5px); box-shadow: 0 0 20px var(--main-red); }
+
+        /* KHUNG NHẬP LIỆU CHÍNH */
+        .terminal-box { background: #000; border: 1px solid #444; padding: 25px; border-radius: 5px; position: relative; }
+        .terminal-header { background: #333; padding: 5px 15px; margin: -25px -25px 20px -25px; display: flex; justify-content: space-between; }
+        
+        input[type="text"] { 
+            width: 95%; background: transparent; border: none; border-bottom: 2px solid #444; 
+            color: var(--hacker-green); font-size: 20px; padding: 10px; outline: none; margin-bottom: 20px;
+        }
+        
+        .main-btn { 
+            background: var(--main-red); color: white; border: none; padding: 15px 40px; 
+            font-weight: bold; cursor: pointer; font-size: 18px; border-radius: 5px; width: 100%;
+        }
+
+        /* KHU VỰC HIỂN THỊ LOG GIẢ LẬP */
+        #console-log { 
+            height: 150px; overflow-y: auto; background: #080808; padding: 15px; 
+            margin-top: 20px; border-left: 3px solid var(--hacker-green); font-size: 14px; color: #aaa;
+        }
+
+        /* KHU VỰC KẾT QUẢ DƯỚI ĐÁY */
+        #footer-mission { margin-top: 1000px; padding: 100px 20px; text-align: center; background: #100000; border-top: 3px solid var(--main-red); }
+        .result-card { border: 2px dashed var(--main-red); padding: 40px; display: inline-block; max-width: 80% }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix"></canvas>
+
+    <div class="header">
+        <div class="ninja-logo">NINJA CORE</div>
+        <p>SYSTEM VERSION 2.0 - BYPASS AUTHORIZED</p>
+    </div>
+
+    <div class="container">
+        <div class="mode-selector">
+            <div class="btn-mode" onclick="setMode('PHA')">
+                <h2 style="color: var(--main-red);">PHÁ LINK</h2>
+                <p>Unlock: Linkvertise, Link4M, 1thelink...</p>
+            </div>
+            <div class="btn-mode" onclick="setMode('GHEP')">
+                <h2 style="color: #0088ff;">GHÉP LINK</h2>
+                <p>Khóa link bằng nhiệm vụ Map</p>
+            </div>
+        </div>
+
+        <div class="terminal-box" id="main-ui" style="display:none;">
+            <div class="terminal-header">
+                <span>NINJA_ALGORITHM_V2.exe</span>
+                <span>STATUS: ACTIVE</span>
+            </div>
+            <h3 id="display-mode">Đang khởi động...</h3>
+            <input type="text" id="target-url" placeholder="Nhập đường link vào đây...">
+            <button class="main-btn" onclick="executeBypass()">KÍCH HOẠT GIAO THỨC</button>
+            
+            <div id="console-log"></div>
+        </div>
+    </div>
+
+    <div id="footer-mission">
+        <div class="result-card">
+            <h1 style="color: var(--main-red);">MÃ XÁC THỰC CẦN THIẾT</h1>
+            <p>Hệ thống đã chuẩn bị xong đường link cho bạn.</p>
+            <p>Để mở khóa, hãy <b>Đánh giá 5 sao</b> cho địa chỉ Google Map của Biệt đội:</p>
+            <button class="main-btn" style="width:auto;" onclick="window.open('https://maps.google.com')">ĐI ĐẾN ĐỊA CHỈ MAP</button>
+            <div id="final-link" style="margin-top:20px; font-weight:bold; color:var(--hacker-green);"></div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        let currentMode = '';
+
+        // Hiệu ứng Ma trận (Matrix Rain)
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const letters = "NINJA0101HACKCORE";
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#f00";
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 33);
+
+        window.onload = () => {
+            speak("Xin chào quý khách thân mến. Tôi là trợ lý của Chủ tịch Ninja. Hãy chọn Phá link hoặc Ghép link để bắt đầu.");
+        };
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('main-ui').style.display = 'block';
+            const title = document.getElementById('display-mode');
+            if(mode === 'PHA') {
+                title.innerText = "CHẾ ĐỘ: PHÁ MỌI LOẠI LINK";
+                speak("Bạn đã chọn chế độ phá link. Vui lòng đưa link mục tiêu cho tôi.");
+            } else {
+                title.innerText = "CHẾ ĐỘ: GHÉP LINK NHIỆM VỤ";
+                speak("Bạn đã chọn chế độ ghép link. Vui lòng đưa link cần mã hóa.");
+            }
+        }
+
+        function executeBypass() {
+            const url = document.getElementById('target-url').value;
+            if(!url) return;
+
+            const log = document.getElementById('console-log');
+            log.innerHTML = "";
+            speak("Đang lốt. lốt thành công. Mã đã được tiếp nhận. Đường link của bạn đã được đưa xuống dưới cùng màn hình.");
+
+            const steps = [
+                "Đang phân tích cấu trúc Domain...",
+                "Bypass Firewall của Linkvertise...",
+                "Tìm kiếm Token ẩn trong Source Code...",
+                "Đang bẻ khóa lớp bảo vệ Link4M...",
+                "Load thành công! Đang giải mã Link gốc..."
+            ];
+
+            steps.forEach((step, index) => {
+                setTimeout(() => {
+                    log.innerHTML += `> ${step}<br>`;
+                    log.scrollTop = log.scrollHeight;
+                    if(index === steps.length - 1) {
+                        document.getElementById('final-link').innerText = "LINK GỐC: " + url;
+                        window.scrollTo({ top: 3000, behavior: 'smooth' });
+                    }
+                }, index * 800);
+            });
+        }
+
+        function speak(text) {
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.lang = 'vi-VN';
+            window.speechSynthesis.speak(msg);
+        }
+    </script>
+</body>
+</html>
